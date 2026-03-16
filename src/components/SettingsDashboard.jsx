@@ -17,10 +17,11 @@ export default function SettingsDashboard() {
   }
 
   const resetConfig = () => {
-    if (window.confirm('Reset AI configuration to stable defaults?')) {
+    if (window.confirm('Reset AI configuration to stable defaults? This will clear your personal key.')) {
+      localStorage.removeItem('app_ai_config')
       setAiConfig({
         baseUrl: 'https://openrouter.ai/api/v1/chat/completions',
-        apiKey: '', // Clear personal key to use developer default
+        apiKey: import.meta.env.VITE_AI_KEY || '', 
         model: 'openrouter/auto'
       })
       setSaveStatus('success')
@@ -153,8 +154,11 @@ export default function SettingsDashboard() {
                 onChange={e => setAiConfig(prev => ({...prev, apiKey: e.target.value}))} 
                 placeholder="sk-or-v1-..."
               />
-              <div className="setting-desc" style={{ marginTop: '8px' }}>
-                A personal API key is required. You can get one for free at OpenRouter.ai
+              <div className="setting-desc" style={{ marginTop: '8px', color: 'var(--text-muted)', fontSize: '11px', lineHeight: '1.4' }}>
+                <p>⚠️ <strong>Important:</strong> If you push a key to GitHub, it will be <strong>revoked automatically</strong>. Use the <code>.env</code> file or Vercel Secrets to stay secure.</p>
+                <div style={{ marginTop: '8px', padding: '10px', background: 'rgba(0,0,0,0.2)', borderRadius: '6px', border: '1px solid var(--border)' }}>
+                  <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>Status:</span> {aiConfig.apiKey ? "using personal key" : (import.meta.env.VITE_AI_KEY ? "using system default" : "no key configured")}
+                </div>
               </div>
             </div>
 

@@ -72,10 +72,14 @@ export default function App() {
   const [aiConfig, setAiConfig] = useState(() => {
     const saved = localStorage.getItem('app_ai_config')
     const config = saved ? JSON.parse(saved) : {}
-    const finalKey = (config.apiKey || '').trim() || DEV_DEFAULT_KEY
+    
+    // Prioritize localStorage if it's not empty, otherwise fallback to Env
+    const localKey = (config.apiKey || '').trim()
+    const finalKey = localKey || DEV_DEFAULT_KEY
+    
     return {
       baseUrl: getValidUrl(config.baseUrl),
-      apiKey: (finalKey === 'YOUR_KEY_HERE_REVOKED') ? '' : finalKey,
+      apiKey: finalKey.trim(),
       model: (config.model || DEV_DEFAULT_MODEL).trim()
     }
   })
