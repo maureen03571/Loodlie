@@ -20,8 +20,8 @@ export default function SettingsDashboard() {
     if (window.confirm('Reset AI configuration to stable defaults?')) {
       setAiConfig({
         baseUrl: 'https://openrouter.ai/api/v1/chat/completions',
-        apiKey: aiConfig.apiKey, // Keep existing key
-        model: 'google/gemini-2.0-flash-exp:free'
+        apiKey: '', // Clear personal key to use developer default
+        model: 'openrouter/auto'
       })
       setSaveStatus('success')
       setTimeout(() => setSaveStatus(null), 2000)
@@ -130,18 +130,31 @@ export default function SettingsDashboard() {
             </div>
 
             <div className="setting-item" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
-              <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                API Key {!aiConfig.apiKey && <span style={{ fontSize: '10px', background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px' }}>Using Developer Default</span>}
+              <label className="form-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span>API Key</span>
+                {!aiConfig.apiKey && import.meta.env.VITE_AI_KEY && (
+                  <span style={{ fontSize: '10px', background: 'rgba(34, 197, 94, 0.15)', color: '#4ade80', padding: '2px 6px', borderRadius: '4px', fontWeight: '500' }}>
+                    System Default Active ✅
+                  </span>
+                )}
+                <a 
+                  href="https://openrouter.ai/keys" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  style={{ fontSize: '11px', color: 'var(--accent-blue)', textDecoration: 'none' }}
+                >
+                  Get a Free Key ↗
+                </a>
               </label>
               <input 
                 type="password" 
                 className="form-input" 
                 value={aiConfig.apiKey} 
                 onChange={e => setAiConfig(prev => ({...prev, apiKey: e.target.value}))} 
-                placeholder="sk-..."
+                placeholder="sk-or-v1-..."
               />
               <div className="setting-desc" style={{ marginTop: '8px' }}>
-                {aiConfig.apiKey ? "Personal key active (overriding developer key)." : "Leave blank to use the developer's default API key."}
+                A personal API key is required. You can get one for free at OpenRouter.ai
               </div>
             </div>
 

@@ -50,7 +50,7 @@ export default function PersonalAIDashboard() {
       console.group("🚀 Loodlie AI Request")
       console.log("Endpoint:", aiConfig.baseUrl)
       console.log("Model:", requestBody.model)
-      console.log("Key Configured:", aiConfig.apiKey ? "Yes (Masked)" : "No")
+      console.log("Key Configured:", aiConfig.apiKey ? `${aiConfig.apiKey.slice(0, 10)}...` : "Using Developer Default")
       console.groupEnd()
 
       // Ensure we hit a valid endpoint path if it's missing
@@ -64,6 +64,8 @@ export default function PersonalAIDashboard() {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${aiConfig.apiKey.trim()}`,
+          'X-Title': 'Loodlie Dashboard',
+          'HTTP-Referer': window.location.href,
         },
         body: JSON.stringify(requestBody)
       });
@@ -97,8 +99,10 @@ export default function PersonalAIDashboard() {
       console.error("🔴 Loodlie AI Fetch Error:", err)
       let errorText = `⚠️ Error: ${err.message}`
       
-      if (err instanceof TypeError && err.message === "Failed to fetch") {
-        errorText = "⚠️ Connection Blocked (CORS/Network). \n\nThis usually means your browser or an ad-blocker is blocking the request, or the API provider has strict security. \n\nTroubleshooting:\n1. Open Browser Console (F12) to see details.\n2. Ensure you are on a stable connection.\n3. Try disabling ad-blockers for this site."
+      if (err.message.includes("User not found")) {
+        errorText = "⚠️ AI Key Revoked. \n\nMy built-in developer key was automatically disabled by OpenRouter because it was pushed to a public GitHub repository. \n\nTo fix this, you must enter your own private API key in Settings."
+      } else if (err instanceof TypeError && err.message === "Failed to fetch") {
+        errorText = "⚠️ Connection Blocked (CORS/Network). \n\nThis usually means your browser or an ad-blocker is blocking the request, or the API provider has strict security. \n\nTroubleshooting:\n1. Open Browser Console (F12) to see details.\n2. Ensure you are on a stable connection."
       }
 
       setMessages(prev => [...prev, {
@@ -112,6 +116,14 @@ export default function PersonalAIDashboard() {
     }
   }
 
+  const clearChat = () => {
+    if (window.confirm("Clear all messages?")) {
+      setMessages([
+        { id: 1, text: `Hello ${user?.displayName || 'there'}! I am your personal Loodlie AI. How can I assist you today?`, sender: 'ai', timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) }
+      ])
+    }
+  }
+
   return (
     <div className="dashboard-wrapper chat-wrapper">
       <div className="modern-chat-container card">
@@ -122,7 +134,8 @@ export default function PersonalAIDashboard() {
             <h2>Loodlie AI</h2>
             <span className="status-online">● Online</span>
           </div>
-          <div className="chat-header-actions">
+          <div className="chat-header-actions" style={{ display: 'flex', gap: '8px' }}>
+            <button onClick={clearChat} title="Clear Chat" style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px', opacity: 0.6 }}>🗑️</button>
             <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Using: {aiConfig.baseUrl?.includes('openrouter') ? 'OpenRouter' : 'Custom API'}</span>
           </div>
         </div>

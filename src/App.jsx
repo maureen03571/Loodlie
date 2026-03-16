@@ -28,11 +28,10 @@ function getTodayKey() {
 }
 
 // ===== Developer AI Defaults =====
-// WARNING: Hardcoding keys in a frontend app makes them visible to anyone who inspects the code.
-// Only do this for private apps or internal demos!
-const DEV_DEFAULT_URL = 'https://openrouter.ai/api/v1/chat/completions'
-const DEV_DEFAULT_KEY = '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'
-const DEV_DEFAULT_MODEL = 'openrouter/auto'
+// These are loaded from .env during development or set in deployment settings (e.g. Vercel)
+const DEV_DEFAULT_URL = import.meta.env.VITE_AI_URL || 'https://openrouter.ai/api/v1/chat/completions'
+const DEV_DEFAULT_KEY = import.meta.env.VITE_AI_KEY || '' 
+const DEV_DEFAULT_MODEL = import.meta.env.VITE_AI_MODEL || 'openrouter/auto'
 
 function getValidUrl(url) {
   let u = (url || '').trim()
@@ -73,9 +72,10 @@ export default function App() {
   const [aiConfig, setAiConfig] = useState(() => {
     const saved = localStorage.getItem('app_ai_config')
     const config = saved ? JSON.parse(saved) : {}
+    const finalKey = (config.apiKey || '').trim() || DEV_DEFAULT_KEY
     return {
       baseUrl: getValidUrl(config.baseUrl),
-      apiKey: (config.apiKey || DEV_DEFAULT_KEY).trim(),
+      apiKey: (finalKey === 'YOUR_KEY_HERE_REVOKED') ? '' : finalKey,
       model: (config.model || DEV_DEFAULT_MODEL).trim()
     }
   })
