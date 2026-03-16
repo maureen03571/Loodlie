@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { useApp } from '../App'
 
 export default function LoginPage() {
-  const { login } = useApp()
+  const { login, signup } = useApp()
+  const [isLoginMode, setIsLoginMode] = useState(true)
+  const [displayName, setDisplayName] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -11,16 +13,24 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!username.trim() || !password.trim()) {
-      setError('Please enter both username and password.')
+    if (!username.trim() || !password.trim() || (!isLoginMode && !displayName.trim())) {
+      setError('Please fill in all required fields.')
       return
     }
     setLoading(true)
     setError('')
     await new Promise(r => setTimeout(r, 600))
-    const ok = login(username, password)
-    if (!ok) {
-      setError('Invalid username or password. Try the demo credentials below.')
+
+    if (isLoginMode) {
+      const ok = login(username.trim(), password)
+      if (!ok) {
+        setError('Invalid username or password. Try the demo credentials below.')
+      }
+    } else {
+      const res = signup(displayName.trim(), username.trim(), password)
+      if (!res.success) {
+        setError(res.message)
+      }
     }
     setLoading(false)
   }
@@ -40,12 +50,27 @@ export default function LoginPage() {
         </div>
         <p className="login-subtitle">Your personal productivity hub</p>
 
-        <h1 className="login-title">Welcome back 👋</h1>
+        <h1 className="login-title">{isLoginMode ? 'Welcome back 👋' : 'Create Account ✨'}</h1>
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '28px' }}>
-          Sign in to continue to your dashboard
+          {isLoginMode ? 'Sign in to continue to your dashboard' : 'Join Loodlie and boost your productivity'}
         </p>
 
         <form onSubmit={handleSubmit}>
+          {!isLoginMode && (
+            <div className="form-group">
+              <label className="form-label">Display Name</label>
+              <input
+                id="login-displayname"
+                className="form-input"
+                type="text"
+                placeholder="e.g. Jane Doe"
+                value={displayName}
+                onChange={e => setDisplayName(e.target.value)}
+                autoFocus={!isLoginMode}
+              />
+            </div>
+          )}
+          
           <div className="form-group">
             <label className="form-label">Username</label>
             <input
@@ -100,16 +125,22 @@ export default function LoginPage() {
             type="submit"
             disabled={loading}
           >
-            {loading ? '⏳ Signing in...' : '→ Sign In'}
+            {loading ? '⏳ Please wait...' : (isLoginMode ? '→ Sign In' : '→ Sign Up')}
           </button>
         </form>
 
-        <div className="login-hint">
-          <strong>Demo credentials:</strong>
-          <br />
-          Username: <strong>demo</strong> &nbsp;·&nbsp; Password: <strong>demo</strong>
-          <br />
-          <span style={{ opacity: 0.7 }}>or try: alex / password123</span>
+        <div style={{ textAlign: 'center', marginTop: '16px', fontSize: '14px', color: 'var(--text-secondary)' }}>
+          {isLoginMode ? "Don't have an account? " : "Already have an account? "}
+          <button
+            type="button"
+            style={{ background: 'none', border: 'none', color: 'var(--accent-blue)', fontWeight: '600', cursor: 'pointer', padding: 0 }}
+            onClick={() => {
+              setIsLoginMode(!isLoginMode)
+              setError('')
+            }}
+          >
+            {isLoginMode ? 'Sign Up' : 'Sign In'}
+          </button>
         </div>
       </div>
     </div>

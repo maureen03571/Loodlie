@@ -4,6 +4,9 @@ const NAV_ITEMS = [
   { id: 'todo', label: 'Task Dashboard', icon: '✅', desc: 'To-do & activity' },
   { id: 'shopping', label: 'Shopping List', icon: '🛒', desc: 'Groceries & more' },
   { id: 'gallery', label: 'Gallery', icon: '🖼️', desc: 'Photos & albums' },
+  { id: 'receipts', label: 'My Shopping Receipts', icon: '🧾', desc: 'Monthly tracker' },
+  { id: 'ai', label: 'My Personal AI', icon: '🤖', desc: 'Chat & ideas' },
+  { id: 'settings', label: 'Settings', icon: '⚙️', desc: 'Theme & account' },
 ]
 
 export default function Sidebar() {
@@ -71,7 +74,9 @@ export default function Sidebar() {
                 ? `${doneTasks}/${totalTasks} done`
                 : item.id === 'shopping'
                   ? `${boughtShop}/${totalShop} bought`
-                  : `${totalPhotos} photo${totalPhotos !== 1 ? 's' : ''}`}
+                  : item.id === 'gallery'
+                    ? `${totalPhotos} photo${totalPhotos !== 1 ? 's' : ''}`
+                    : item.desc}
             </div>
           </div>
         </div>
