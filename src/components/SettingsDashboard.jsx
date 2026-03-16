@@ -157,8 +157,14 @@ export default function SettingsDashboard() {
               <div className="setting-desc" style={{ marginTop: '8px', color: 'var(--text-muted)', fontSize: '11px', lineHeight: '1.4' }}>
                 <p>⚠️ <strong>Important:</strong> If you push a key to GitHub, it will be <strong>revoked automatically</strong>. Use the <code>.env</code> file or Vercel Secrets to stay secure.</p>
                 <div style={{ marginTop: '8px', padding: '10px', background: 'rgba(0,0,0,0.2)', borderRadius: '6px', border: '1px solid var(--border)' }}>
-                  <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>Status:</span> {aiConfig.apiKey ? "using personal key" : (import.meta.env.VITE_AI_KEY ? "using system default" : "no key configured")}
+                  <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>Status:</span> {aiConfig.apiKey ? "Using Personal Key" : (import.meta.env.VITE_AI_KEY ? "Using System Default" : "KEY REQUIRED")}
                 </div>
+                {!aiConfig.apiKey && !import.meta.env.VITE_AI_KEY && (
+                  <div style={{ marginTop: '12px', padding: '12px', background: 'rgba(234, 179, 8, 0.1)', border: '1px solid rgba(234, 179, 8, 0.3)', borderRadius: '8px', color: '#fde047' }}>
+                    <p style={{ margin: '0 0 8px 0', fontSize: '12px', fontWeight: '600' }}>🔑 Why is this required?</p>
+                    <p style={{ margin: 0, fontSize: '11px', opacity: 0.9 }}>The initial developer key was revoked for security reasons after being pushed to GitHub. To use the AI, you must now provide your own free key.</p>
+                  </div>
+                )}
               </div>
             </div>
 

@@ -94,13 +94,15 @@ export default function PersonalAIDashboard() {
         sender: 'ai',
         timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
       }])
-
     } catch (err) {
-      console.error("🔴 Loodlie AI Fetch Error:", err)
-      let errorText = `⚠️ Error: ${err.message}`
+      const rawError = err.message || JSON.stringify(err)
+      console.error("🔴 AI API Error Detail:", rawError)
+
+      let errorText = `⚠️ Error: ${rawError}`
       
-      if (err.message.includes("User not found")) {
-        errorText = "⚠️ AI Key Revoked. \n\nMy built-in developer key was automatically disabled by OpenRouter because it was pushed to a public GitHub repository. \n\nTo fix this, you must enter your own private API key in Settings."
+      // Case-insensitive check for common revocation messages
+      if (rawError.toLowerCase().includes("user not found") || rawError.toLowerCase().includes("unauthorized")) {
+        errorText = "⚠️ AI Key Revoked or Invalid. \n\nYour current API key is not working. This usually happens if the key was deleted or revoked by the provider. \n\nTO FIX THIS:\n1. Get a fresh key from OpenRouter.ai\n2. Open Settings (⚙️)\n3. Click 'Advanced Configuration'\n4. Paste your new key and click 'Save'."
       } else if (err instanceof TypeError && err.message === "Failed to fetch") {
         errorText = "⚠️ Connection Blocked (CORS/Network). \n\nThis usually means your browser or an ad-blocker is blocking the request, or the API provider has strict security. \n\nTroubleshooting:\n1. Open Browser Console (F12) to see details.\n2. Ensure you are on a stable connection."
       }
