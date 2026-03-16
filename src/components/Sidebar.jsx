@@ -29,7 +29,7 @@ export default function Sidebar() {
       </div>
 
       {/* User info */}
-      <div style={{
+      <div className="user-info-sidebar" style={{
         margin: '0 0 20px',
         padding: '14px',
         background: 'var(--glass)',
