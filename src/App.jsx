@@ -1,5 +1,5 @@
 import { useState, useEffect, createContext, useContext } from 'react'
-import LoginPage from './components/LoginPage'
+// Loodlie App Core - Redeploy Trigger (Keys Secured via VITE_ Environment Variables)import LoginPage from './components/LoginPage'
 import Sidebar from './components/Sidebar'
 import TodoDashboard from './components/TodoDashboard'
 import ShoppingDashboard from './components/ShoppingDashboard'
